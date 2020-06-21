@@ -34,7 +34,7 @@ class Builder extends Role {
             lib.assign(this.creep, node);
         }
 
-        return this.build(node);
+        this.build(node);
     }
 
     build(target) {

@@ -26,7 +26,7 @@ class Lib {
                 filter,
             }) || null;
         } else {
-            ret = nodes.filter(filter)[0];
+            [ret] = nodes.filter(filter);
         }
 
         return ret || null;

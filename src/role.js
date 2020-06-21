@@ -1,6 +1,12 @@
 const lib = require('lib');
 
 class Role {
+    /**
+     *
+     * @param {Creep} creep
+     * @param {string} role
+     * @memberof Role
+     */
     constructor(creep, role) {
         this.creep = creep;
         creep.memory.role = role;
@@ -24,24 +30,24 @@ class Role {
      * @memberof Role
      */
     moveTo(destination, fast) {
+        let finalDestination = destination;
         switch (true) {
             // object id, just go
-            case typeof destination === 'string':
-                destination = lib.getObjectById(destination);
+            case typeof finalDestination === 'string':
+                finalDestination = lib.getObjectById(finalDestination);
                 break;
 
             // array of nodes, pick best one
-            case Array.isArray(destination):
-                destination = lib.findOneNode(this.creep, destination, fast);
+            case Array.isArray(finalDestination):
+                finalDestination = lib.findOneNode(this.creep, finalDestination, fast);
                 break;
 
             // this is probably a node itself
             default:
-                destination = destination;
                 break;
         }
 
-        return this.creep.moveTo(destination);
+        return this.creep.moveTo(finalDestination);
     }
 }
 

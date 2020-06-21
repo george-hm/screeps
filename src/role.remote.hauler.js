@@ -12,14 +12,14 @@ class RemoteHauler extends Role {
         if (!Memory.remoteRoom) {
             Memory.remoteRoom = {};
             console.log('Memory.remoteRoom needs to be set!');
-            return;
+            return 1;
         }
 
         const { transfer } = this.creep.memory;
         if (this.creep.store.getFreeCapacity() && !transfer) {
             return this.collect();
         }
-        this.transfer();
+        return this.transfer();
     }
 
     /**
@@ -61,7 +61,7 @@ class RemoteHauler extends Role {
         switch (result) {
             case OK:
                 lib.unassign(this.creep);
-                return;
+                return 0;
 
             case ERR_NOT_IN_RANGE:
                 return this.creep.moveTo(target);
@@ -75,6 +75,8 @@ class RemoteHauler extends Role {
                 console.log(`Unknown hauler.collect response: ${result}`);
                 break;
         }
+
+        return 0;
     }
 
     /**
@@ -91,7 +93,7 @@ class RemoteHauler extends Role {
 
         // if we're still going home, dont do anything else
         if (!this.isHome()) {
-            return;
+            return 0;
         }
 
         const target = lib.getObjectById(this.creep.memory.assignment) ||
@@ -136,6 +138,8 @@ class RemoteHauler extends Role {
                 console.log(`${this.creep.name} hauler.transfer unexpected response: ${result}`);
                 break;
         }
+
+        return 0;
     }
 
     /**
