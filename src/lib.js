@@ -4,27 +4,38 @@ class Lib {
      * assignment capacity
      *
      * @static
-     * @param {item} item           A item
-     * @param {any[]|number} targets  A find (FIND_SOURCES_ACTIVE) or an array of nodes
-     * @param {boolean} fast          If we should use quick pathfinding (USES MORE CPU)
+     * @param {Structure} item A item
+     * @param {Structure[]|FindConstant} targets  A find (FIND_SOURCES_ACTIVE) or an array of nodes
+     * @param {Boolean} fast If we should use quick pathfinding (USES MORE CPU)
+     * @param {Number} max The maximum number of assignments for targets
      * @returns The node, or null
      * @memberof Lib
      */
     static findOneNode(item, targets, fast, max) {
         const nodes = Array.isArray(targets) ? targets : this.findNodes(item, targets);
 
-        const filter = struct => {
+        /**
+         * Filter out structures so that we only get
+         * structures which are avilable to be assigned
+         *
+         * @param {Structure} struct
+         * @returns
+         */
+        function filter(struct) {
             if (!Memory.assignments[struct.id]) {
                 Memory.assignments[struct.id] = {};
             }
 
             return Object.keys(Memory.assignments[struct.id]).length < (max || Lib.MAX_PER_NODE);
-        };
+        }
         let ret;
         if (fast) {
-            ret = item.pos.findClosestByRange(nodes, {
-                filter,
-            }) || null;
+            ret = item.pos.findClosestByRange(
+                nodes,
+                {
+                    filter,
+                },
+            ) || null;
         } else {
             [ret] = nodes.filter(filter);
         }
@@ -33,14 +44,12 @@ class Lib {
     }
 
     /**
-     * Find nodes, just like the room.find method
-     *
-     * If passed in name param, we cache this
+     * Find nodes, just like the room.find method except
+     * we should be using this as it caches
      *
      * @static
-     * @param {item} item  An item (creep/tower)
-     * @param {number} type  The type to find e.g. FIND_SOURCES_ACTIVE
-     * @param {string} name  Name to cache result as
+     * @param {Creep|Structure} item  An item (creep/tower)
+     * @param {FindConstant} type  The type to find e.g. FIND_SOURCES_ACTIVE
      * @returns
      * @memberof Lib
      */
@@ -56,17 +65,17 @@ class Lib {
      * Assign an item to a node
      * Reassigns if already assigned
      *
-     * @param {*} item
+     * @param {Creep} creep
      * @param {Structure} node
-     * @returns {boolean}  true if assigned, false if can't assign
+     * @returns {Boolean}  true if assigned, false if can't assign
      * @memberof Lib
      */
-    static assign(item, node) {
+    static assign(creep, node) {
         if (!node || !node.id) {
             return false;
         }
 
-        Lib.unassign(item);
+        Lib.unassign(creep);
 
         if (!Memory.assignments[node.id]) {
             Memory.assignments[node.id] = {};
@@ -76,8 +85,8 @@ class Lib {
             return false;
         }
 
-        Memory.assignments[node.id][item.name] = 1;
-        item.memory.assignment = node.id;
+        Memory.assignments[node.id][creep.name] = 1;
+        creep.memory.assignment = node.id;
         return true;
     }
 
@@ -86,15 +95,15 @@ class Lib {
      *
      * Does nothing if not already assigned
      *
-     * @param {item} item  The item to unassign
+     * @param {Creep} creep  The item to unassign
      * @memberof Lib
      */
-    static unassign(item) {
-        const nodeId = item.memory.assignment;
-        item.memory.assignment = null;
+    static unassign(creep) {
+        const nodeId = creep.memory.assignment;
+        creep.memory.assignment = null;
 
         if (nodeId && Memory.assignments[nodeId]) {
-            delete Memory.assignments[nodeId][item.name];
+            delete Memory.assignments[nodeId][creep.name];
         }
     }
 
@@ -119,28 +128,36 @@ class Lib {
      * Put in a request for energy
      *
      * @static
-     * @param {item} item
+     * @param {Creep|StructureTower} item
      * @memberof Lib
      */
     static requestResources(item) {
-        Memory.requests[item.room.name] = Memory.requests[item.room.name] ? Memory.requests[item.room.name] : {};
-        Memory.requests[item.room.name][item.name || item.id] = item.store.getFreeCapacity(RESOURCE_ENERGY);
+        // put our room name in Memory.requests
+        Memory.requests[item.room.name] = Memory.requests[item.room.name] ?
+            Memory.requests[item.room.name] :
+            {};
+
+        Memory.requests[item.room.name][item.id] = item.store.getFreeCapacity(RESOURCE_ENERGY);
     }
 
+    /**
+     * Gets a request which was generated from requestResources
+     *
+     * @static
+     * @param {Creep} creep
+     * @returns
+     * @memberof Lib
+     */
     static getRequest(creep) {
         const requests = Memory.requests[creep.room.name];
-        for (const itemName in requests) {
-            if (Game.creeps[itemName]) {
-                // this request is going to be fulfilled, delete from memory (1 assignee only)
-                delete Memory.requests[creep.room.name][itemName];
-                return Game.creeps[itemName];
-            } if (Lib.getObjectById(itemName)) {
-                // this request is going to be fulfilled, delete from memory (1 assignee only)
-                delete Memory.requests[creep.room.name][itemName];
-                return Lib.getObjectById(itemName);
-            }
+        for (const objectId in requests) {
+            // we are handling the request, delete it so we don't
+            // handle it ever again
+            delete Memory.requests[creep.room.name][objectId];
 
-            delete Memory.requests[creep.room.name][itemName];
+            if (Lib.getObjectById(objectId)) {
+                return Lib.getObjectById(objectId);
+            }
         }
 
         return null;
