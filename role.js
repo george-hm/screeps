@@ -1,7 +1,6 @@
 const lib = require('lib');
 
 class Role {
-
     constructor(creep, role) {
         this.creep = creep;
         creep.memory.role = role;

@@ -1,5 +1,4 @@
 class Lib {
-
     /**
      * Finds one node which is not at full
      * assignment capacity
@@ -23,14 +22,14 @@ class Lib {
         };
         let ret;
         if (fast) {
-            ret =  item.pos.findClosestByRange(nodes, {
-                filter: filter
+            ret = item.pos.findClosestByRange(nodes, {
+                filter,
             }) || null;
         } else {
             ret = nodes.filter(filter)[0];
         }
 
-        return ret ? ret : null;
+        return ret || null;
     }
 
     /**
@@ -111,10 +110,9 @@ class Lib {
     static getObjectById(id) {
         if (Lib.cache[id]) {
             return Lib.cache[id];
-        } else {
-            Lib.cache[id] = Game.getObjectById(id);
-            return Lib.cache[id];
         }
+        Lib.cache[id] = Game.getObjectById(id);
+        return Lib.cache[id];
     }
 
     /**
@@ -136,14 +134,13 @@ class Lib {
                 // this request is going to be fulfilled, delete from memory (1 assignee only)
                 delete Memory.requests[creep.room.name][itemName];
                 return Game.creeps[itemName];
-            } else if (Lib.getObjectById(itemName)) {
+            } if (Lib.getObjectById(itemName)) {
                 // this request is going to be fulfilled, delete from memory (1 assignee only)
                 delete Memory.requests[creep.room.name][itemName];
                 return Lib.getObjectById(itemName);
             }
-            else {
-                delete Memory.requests[creep.room.name][itemName];
-            }
+
+            delete Memory.requests[creep.room.name][itemName];
         }
 
         return null;

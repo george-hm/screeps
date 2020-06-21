@@ -2,7 +2,6 @@ const Role = require('role');
 const lib = require('lib');
 
 class Gatherer extends Role {
-
     constructor(creep) {
         super(creep, 'gatherer');
         this.run();

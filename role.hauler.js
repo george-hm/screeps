@@ -2,19 +2,18 @@ const Role = require('role');
 const lib = require('lib');
 
 class Hauler extends Role {
-
     constructor(creep) {
         super(creep, 'hauler');
         this.run();
     }
 
     run() {
-        const transfer = this.creep.memory.transfer;
+        const { transfer } = this.creep.memory;
         if (this.creep.store.getFreeCapacity() && !transfer) {
             return this.collect();
-        } else {
-            this.transfer();
         }
+
+        return this.transfer();
     }
 
     /**
@@ -28,7 +27,7 @@ class Hauler extends Role {
         }
 
         let target;
-        if(this.creep.memory.assignment) {
+        if (this.creep.memory.assignment) {
             target = Game.getObjectById(this.creep.memory.assignment);
         } else {
             target = this.getCollectionTarget();
@@ -84,9 +83,8 @@ class Hauler extends Role {
             if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) {
                 this.creep.memory.transfer = false;
                 return this.collect();
-            } else {
-                return this.goHome();
             }
+            return this.goHome();
         }
 
         if (target.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
@@ -118,8 +116,6 @@ class Hauler extends Role {
                 console.log(`${this.creep.name} hauler.transfer unexpected response: ${result}`);
                 break;
         }
-
-        return;
     }
 
     /**
@@ -131,14 +127,14 @@ class Hauler extends Role {
     getTransferTarget() {
         const structures = lib.findNodes(this.creep, FIND_MY_STRUCTURES);
         const destinations = structures.filter(struct => {
-                if (![STRUCTURE_SPAWN, STRUCTURE_EXTENSION].includes(struct.structureType)) {
-                    return false;
-                }
-                if (struct.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
-                    return false;
-                }
-                return true;
-            });
+            if (![STRUCTURE_SPAWN, STRUCTURE_EXTENSION].includes(struct.structureType)) {
+                return false;
+            }
+            if (struct.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+                return false;
+            }
+            return true;
+        });
 
         return lib.findOneNode(this.creep, destinations, false, 1);
     }
@@ -152,32 +148,28 @@ class Hauler extends Role {
     getCollectionTarget() {
         const droppedEnergy = lib.findNodes(
             this.creep,
-            FIND_DROPPED_RESOURCES
+            FIND_DROPPED_RESOURCES,
         ).filter(resource => resource.resourceType === RESOURCE_ENERGY && resource.amount >= 100);
 
         let target = lib.findOneNode(
             this.creep,
             droppedEnergy,
             false,
-            1
+            1,
         );
 
         // look for structures instead
         if (!target) {
             const availableStructures = lib.findNodes(
-                    this.creep,
-                    FIND_STRUCTURES
-            ).filter(struct => {
-                return struct.structureType == STRUCTURE_CONTAINER;
-            }).sort((a, b) => {
-                return  b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY);
-            });
+                this.creep,
+                FIND_STRUCTURES,
+            ).filter(struct => struct.structureType == STRUCTURE_CONTAINER).sort((a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY));
 
             target = lib.findOneNode(
                 this.creep,
                 availableStructures,
                 false,
-                3
+                3,
             );
         }
 
@@ -195,10 +187,9 @@ class Hauler extends Role {
         const firstFlag = lib.findNodes(this.creep, FIND_FLAGS).map(flag => flag.pos)[0];
         if (firstFlag) {
             return this.creep.moveTo(firstFlag);
-        } else {
-            const home = lib.findNodes(this.creep, FIND_MY_STRUCTURES).filter(struct => struct.structureType === STRUCTURE_SPAWN)[0];
-            return this.creep.moveTo(home);
         }
+        const home = lib.findNodes(this.creep, FIND_MY_STRUCTURES).filter(struct => struct.structureType === STRUCTURE_SPAWN)[0];
+        return this.creep.moveTo(home);
     }
 }
 

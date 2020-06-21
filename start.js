@@ -9,7 +9,6 @@ const lib = require('lib');
  * @class Sequence
  */
 class Start {
-
     /**
      * Run the Sequence sequence
      *
@@ -24,7 +23,7 @@ class Start {
         // reset memory and spawn new creeps
         if (shouldCheck) {
             this._resetMemory();
-            for (let spawnName in Game.spawns) {
+            for (const spawnName in Game.spawns) {
                 const spawner = Game.spawns[spawnName];
                 spawnCreeps(spawner);
             }
@@ -33,10 +32,9 @@ class Start {
             Memory.checkIn = Game.time + 10;
         }
 
-
         // go through all creeps in memory
         const creepList = Memory.creeps;
-        for (let creepName in creepList) {
+        for (const creepName in creepList) {
             const creep = Game.creeps[creepName];
 
             // it's a dead creep, clean memory
@@ -49,7 +47,7 @@ class Start {
                 continue;
             }
 
-            let roleClass = roleList[creep.memory.role];
+            const roleClass = roleList[creep.memory.role];
             if (roleClass) {
                 // give the creep its role to do
                 new roleClass(creep);
@@ -91,7 +89,7 @@ class Start {
      */
     static _runCreeps() {
         const creepList = Game.creeps;
-        for (let creepName in creepList) {
+        for (const creepName in creepList) {
             const creep = creepList[creepName];
             if (creep.spawning) {
                 continue;

@@ -2,7 +2,6 @@ const Role = require('role');
 const lib = require('lib');
 
 class Builder extends Role {
-
     constructor(creep) {
         super(creep, 'builder');
         this.run();
@@ -53,7 +52,7 @@ class Builder extends Role {
                 return true;
 
             default:
-                console.log('unknown response for role.worker.build: ' + result);
+                console.log(`unknown response for role.worker.build: ${result}`);
                 return true;
         }
     }

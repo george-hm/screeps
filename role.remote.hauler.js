@@ -2,7 +2,6 @@ const Role = require('role');
 const lib = require('lib');
 
 class RemoteHauler extends Role {
-
     constructor(creep) {
         super(creep, 'remoteHauler');
         this.run();
@@ -16,12 +15,11 @@ class RemoteHauler extends Role {
             return;
         }
 
-        const transfer = this.creep.memory.transfer;
+        const { transfer } = this.creep.memory;
         if (this.creep.store.getFreeCapacity() && !transfer) {
             return this.collect();
-        } else {
-            this.transfer();
         }
+        this.transfer();
     }
 
     /**
@@ -43,7 +41,7 @@ class RemoteHauler extends Role {
         }
 
         let target;
-        if(this.creep.memory.assignment) {
+        if (this.creep.memory.assignment) {
             target = lib.getObjectById(this.creep.memory.assignment);
         } else {
             target = this.getCollectionTarget();
@@ -105,9 +103,8 @@ class RemoteHauler extends Role {
             if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY) > 100) {
                 this.creep.memory.transfer = false;
                 return this.collect();
-            } else {
-                return this.goHome();
             }
+            return this.goHome();
         }
 
         if (target.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
@@ -139,8 +136,6 @@ class RemoteHauler extends Role {
                 console.log(`${this.creep.name} hauler.transfer unexpected response: ${result}`);
                 break;
         }
-
-        return;
     }
 
     /**
@@ -152,14 +147,14 @@ class RemoteHauler extends Role {
     getTransferTarget() {
         const structures = lib.findNodes(this.creep, FIND_MY_STRUCTURES);
         const destinations = structures.filter(struct => {
-                if (![STRUCTURE_SPAWN, STRUCTURE_EXTENSION].includes(struct.structureType)) {
-                    return false;
-                }
-                if (struct.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
-                    return false;
-                }
-                return true;
-            });
+            if (![STRUCTURE_SPAWN, STRUCTURE_EXTENSION].includes(struct.structureType)) {
+                return false;
+            }
+            if (struct.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+                return false;
+            }
+            return true;
+        });
 
         return lib.findOneNode(this.creep, destinations, false, 1);
     }
@@ -173,32 +168,30 @@ class RemoteHauler extends Role {
     getCollectionTarget() {
         const droppedEnergy = lib.findNodes(
             this.creep,
-            FIND_DROPPED_RESOURCES
+            FIND_DROPPED_RESOURCES,
         ).filter(resource => resource.resourceType === RESOURCE_ENERGY && resource.amount >= 100);
 
         let target = lib.findOneNode(
             this.creep,
             droppedEnergy,
             false,
-            1
+            1,
         );
 
         // look for structures instead
         if (!target) {
+            // containers only
             const availableStructures = lib.findNodes(
-                    this.creep,
-                    FIND_STRUCTURES
-            ).filter(struct => {
-                return struct.structureType == STRUCTURE_CONTAINER;
-            }).sort((a, b) => {
-                return  b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY);
-            });
+                this.creep,
+                FIND_STRUCTURES,
+            ).filter(struct => struct.structureType === STRUCTURE_CONTAINER)
+                .sort((a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY));
 
             target = lib.findOneNode(
                 this.creep,
                 availableStructures,
                 false,
-                3
+                3,
             );
         }
 
@@ -217,22 +210,20 @@ class RemoteHauler extends Role {
             this.creep.moveTo(new RoomObject(
                 this.creep.memory.home.x,
                 this.creep.memory.home.y,
-                this.creep.memory.home.roomName
+                this.creep.memory.home.roomName,
             ));
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     goHome() {
         const firstFlag = lib.findNodes(this.creep, FIND_FLAGS).map(flag => flag.pos)[0];
         if (firstFlag) {
             return this.creep.moveTo(firstFlag);
-        } else {
-            const home = lib.findNodes(this.creep, FIND_MY_STRUCTURES).filter(struct => struct.structureType === STRUCTURE_SPAWN)[0];
-            return this.creep.moveTo(home);
         }
+        const home = lib.findNodes(this.creep, FIND_MY_STRUCTURES).filter(struct => struct.structureType === STRUCTURE_SPAWN)[0];
+        return this.creep.moveTo(home);
     }
 
     goRemote() {
@@ -240,7 +231,7 @@ class RemoteHauler extends Role {
         const remoteRoom = new RoomObject(
             Memory.remoteRoom.x,
             Memory.remoteRoom.y,
-            Memory.remoteRoom.roomName
+            Memory.remoteRoom.roomName,
         );
         return this.creep.moveTo(remoteRoom);
     }
