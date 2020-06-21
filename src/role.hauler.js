@@ -23,7 +23,8 @@ class Hauler extends Role {
      */
     collect() {
         if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
-            return this.transfer();
+            this.transfer();
+            return;
         }
 
         let target;
@@ -34,7 +35,8 @@ class Hauler extends Role {
         }
 
         if (!target) {
-            return this.goHome();
+            this.goHome();
+            return;
         }
 
         lib.assign(this.creep, target);
@@ -50,11 +52,13 @@ class Hauler extends Role {
                 return;
 
             case ERR_NOT_IN_RANGE:
-                return this.creep.moveTo(target);
+                this.creep.moveTo(target);
+                break;
 
             case ERR_FULL:
             case ERR_NOT_ENOUGH_RESOURCES:
-                return lib.unassign(this.creep);
+                lib.unassign(this.creep);
+                break;
 
             default:
                 lib.unassign(this.creep);
@@ -71,7 +75,8 @@ class Hauler extends Role {
     transfer() {
         if (this.creep.store.getUsedCapacity() === 0) {
             this.creep.memory.transfer = false;
-            return this.collect();
+            this.collect();
+            return;
         }
         this.creep.memory.transfer = true;
         const target = lib.getObjectById(this.creep.memory.assignment) ||
@@ -82,14 +87,18 @@ class Hauler extends Role {
             lib.unassign(this.creep);
             if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) {
                 this.creep.memory.transfer = false;
-                return this.collect();
+                this.collect();
+                return;
             }
-            return this.goHome();
+
+            this.goHome();
+            return;
         }
 
         if (target.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
             lib.unassign(this.creep);
-            return this.transfer();
+            this.transfer();
+            return;
         }
 
         lib.assign(this.creep, target);
@@ -163,7 +172,8 @@ class Hauler extends Role {
             const availableStructures = lib.findNodes(
                 this.creep,
                 FIND_STRUCTURES,
-            ).filter(struct => struct.structureType == STRUCTURE_CONTAINER).sort((a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY));
+            ).filter(struct => struct.structureType === STRUCTURE_CONTAINER)
+                .sort((a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY));
 
             target = lib.findOneNode(
                 this.creep,

@@ -16,13 +16,14 @@ class RemoteGatherer extends Role {
 
         const node = lib.getObjectById(this.creep.memory.assignment) || lib.findOneNode(
             this.creep,
-            nodeList.map(node => lib.getObjectById(node) || null).filter(_ => _),
+            nodeList.map(currentNode => lib.getObjectById(currentNode) || null).filter(_ => _),
             false,
             1,
         );
 
         if (!node) {
-            return this.goRemote();
+            this.goRemote();
+            return;
         }
 
         lib.assign(this.creep, node);

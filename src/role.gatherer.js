@@ -24,10 +24,12 @@ class Gatherer extends Role {
             case OK:
                 break;
             case ERR_NOT_IN_RANGE:
-                return this.creep.moveTo(node);
+                this.creep.moveTo(node);
+                break;
             default:
                 console.log(`${this.creep.name}: Unknown harvest response: ${harvestResult}`);
-                return lib.unassign(this.creep);
+                lib.unassign(this.creep);
+                break;
         }
     }
 }
