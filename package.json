@@ -7,6 +7,7 @@
   "license": "None",
   "private": true,
   "dependencies": {
+    "@types/screeps": "^3.1.2",
     "eslint": "6.8",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.21.2",
