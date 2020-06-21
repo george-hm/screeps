@@ -4,7 +4,7 @@ class Role {
     /**
      *
      * @param {Creep} creep
-     * @param {string} role
+     * @param {String} role
      * @memberof Role
      */
     constructor(creep, role) {
@@ -24,9 +24,9 @@ class Role {
      * - An array of nodes (checks assignments)
      * - A node
      *
-     * @param {*} destination - Where to go
-     * @param {boolean} fast - If we should caclulate shortest path (INCREASED CPU)
-     * @return {number} Creep.moveTo response
+     * @param {String|Structure[]} destination - Where to go
+     * @param {Boolean} fast - If we should caclulate shortest path (INCREASED CPU)
+     * @return {Number} Creep.moveTo response
      * @memberof Role
      */
     moveTo(destination, fast) {

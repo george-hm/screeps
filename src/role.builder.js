@@ -37,6 +37,11 @@ class Builder extends Role {
         this.build(node);
     }
 
+    /**
+     * @param {Structure|StructureController} target
+     * @returns
+     * @memberof Builder
+     */
     build(target) {
         const result = target instanceof StructureController ?
             this.creep.upgradeController(target) :
