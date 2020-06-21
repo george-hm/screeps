@@ -1,0 +1,16 @@
+{
+  "name": "screeps",
+  "version": "1.0.0",
+  "description": "screeps code",
+  "main": "main.js",
+  "author": "George <georgehm@pm.me>",
+  "license": "None",
+  "private": true,
+  "dependencies": {
+    "eslint": "^7.3.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-screeps": "^2.0.0",
+    "grunt": "^1.1.0",
+    "grunt-screeps": "^1.4.0"
+  }
+}
