@@ -49,15 +49,14 @@ class Builder extends Role {
         switch (result) {
             case ERR_NOT_ENOUGH_RESOURCES:
             case OK:
-                return true;
+                return;
 
             case ERR_NOT_IN_RANGE:
                 this.moveTo(target);
-                return true;
+                return;
 
             default:
                 console.log(`unknown response for role.worker.build: ${result}`);
-                return true;
         }
     }
 }
