@@ -4,7 +4,6 @@ const lib = require('lib');
 class RemoteGatherer extends Role {
     constructor(creep) {
         super(creep, 'remoteGatherer');
-        this.run();
     }
 
     run() {

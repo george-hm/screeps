@@ -4,7 +4,7 @@ const lib = require('lib');
 class RemoteHauler extends Role {
     constructor(creep) {
         super(creep, 'remoteHauler');
-        this.run();
+
         // @TODO: set home
     }
 

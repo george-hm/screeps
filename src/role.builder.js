@@ -4,7 +4,6 @@ const lib = require('lib');
 class Builder extends Role {
     constructor(creep) {
         super(creep, 'builder');
-        this.run();
     }
 
     run() {

@@ -3,7 +3,9 @@ const lib = require('lib');
 class Tower {
     constructor(tower) {
         this.tower = tower;
+    }
 
+    run() {
         if (this.tower.store.getUsedCapacity(RESOURCE_ENERGY) < (this.tower.store.getCapacity(RESOURCE_ENERGY) / 2)) {
             lib.requestResources(this.tower);
         }

@@ -55,7 +55,6 @@
         "no-return-await": 0,
         "no-useless-escape": 0,
         "import/no-unresolved": 0,
-        "guard-for-in": 0,
-        "no-new": 0
+        "guard-for-in": 0
     }
 }

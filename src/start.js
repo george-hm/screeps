@@ -41,7 +41,8 @@ class Start {
                 continue;
             }
 
-            new Tower(struct);
+            const towerInstance = new Tower(struct);
+            towerInstance.run();
         }
     }
 
@@ -93,7 +94,8 @@ class Start {
 
             const creepRoleClass = roleList[currentCreep.memory.role];
             if (creepRoleClass) {
-                new creepRoleClass(currentCreep);
+                const creepInstance = new creepRoleClass(currentCreep);
+                creepInstance.run();
             }
         }
     }
