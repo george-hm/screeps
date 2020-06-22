@@ -32,7 +32,7 @@ class Start {
             Memory.checkIn = Game.time + 10;
         }
 
-        Start.runCreeps();
+        Start._runCreeps();
 
         // tell tower to defend (more in future)
         for (const structureHash in Game.structures) {
@@ -77,7 +77,7 @@ class Start {
      *
      * @memberof Start
      */
-    static runCreeps() {
+    static _runCreeps() {
         const creepList = Game.creeps;
         for (const creepName in creepList) {
             const currentCreep = creepList[creepName];
