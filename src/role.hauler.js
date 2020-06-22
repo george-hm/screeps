@@ -28,7 +28,7 @@ class Hauler extends Role {
 
         let target;
         if (this.creep.memory.assignment) {
-            target = Game.getObjectById(this.creep.memory.assignment);
+            target = lib.getObjectById(this.creep.memory.assignment);
         } else {
             target = this.getCollectionTarget();
         }
