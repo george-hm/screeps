@@ -106,9 +106,9 @@ class Start {
      */
     static _startMemory() {
         lib.cache = {};
-        Memory.checkIn = Memory.checkIn ? Memory.checkIn : Game.time;
-        Memory.assignments = Memory.assignments ? Memory.assignments : {};
-        Memory.requests = Memory.requests ? Memory.requests : {};
+        Memory.checkIn = Memory.checkIn || Game.time;
+        Memory.assignments = Memory.assignments || {};
+        Memory.requests = Memory.requests || {};
     }
 }
 
